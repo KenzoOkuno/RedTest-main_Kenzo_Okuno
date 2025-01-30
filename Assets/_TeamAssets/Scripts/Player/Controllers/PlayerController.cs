@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour
         stateMachine?.CurrentState?.HandleMovement();  // Delegar movimento ao estado atual
         ApplyGravity();  // Aplica a gravidade
 
-       // HandleInputActions(); // Processa as ações de entrada
+        // HandleInputActions(); // Processa as ações de entrada
     }
 
 

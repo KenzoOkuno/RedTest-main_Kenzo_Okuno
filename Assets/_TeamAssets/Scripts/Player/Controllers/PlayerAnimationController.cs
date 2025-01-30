@@ -2,10 +2,13 @@ using UnityEngine;
 
 public class PlayerAnimationController : MonoBehaviour
 {
+    #region Variáveis Privadas
     private Animator animator;
     private PlayerStateMachine stateMachine;
     private AttackState attackState;
+    #endregion
 
+    #region Métodos Unity
     private void Awake()
     {
         // Obtém os componentes necessários
@@ -29,7 +32,9 @@ public class PlayerAnimationController : MonoBehaviour
     {
         UpdateSpeedParameter();
     }
+    #endregion
 
+    #region Controle de Velocidade
     private void UpdateSpeedParameter()
     {
         if (stateMachine != null && stateMachine.CurrentState is MovingState movingState)
@@ -44,11 +49,12 @@ public class PlayerAnimationController : MonoBehaviour
             animator.SetFloat("Speed", 0f);
         }
     }
+    #endregion
 
+    #region Ataques
     /// <summary>
     /// Gatilho para iniciar um ataque com base no combo atual.
     /// </summary>
-    /// <param name="comboStep">Passo do combo (1, 2 ou 3).</param>
     public void TriggerAttack(int comboStep)
     {
         // Reseta triggers antigos para evitar conflitos
@@ -58,21 +64,19 @@ public class PlayerAnimationController : MonoBehaviour
         {
             case 1:
                 animator.SetTrigger("Attack1");
-              //  attackState.ActivateCollider();
                 animator.SetBool("IsAttacking", true);
                 break;
             case 2:
                 animator.SetTrigger("Attack2");
-               // attackState.ActivateCollider();
                 animator.SetBool("IsAttacking", true);
                 break;
             case 3:
                 animator.SetTrigger("Attack3");
-              //  attackState.ActivateCollider();
                 animator.SetBool("IsAttacking", true);
                 break;
         }
     }
+
     public void TriggerSpecialAttack()
     {
         // Reseta triggers antigos para evitar conflitos
@@ -82,22 +86,17 @@ public class PlayerAnimationController : MonoBehaviour
         animator.SetTrigger("SpecialAttack");
         animator.SetBool("IsAttacking", true);
     }
+    #endregion
 
-    /// <summary>
-    /// Reseta o estado do Animator ao iniciar ou após uma sequência de ataques.
-    /// </summary>
+    #region Reset de Animação
     private void ResetAnimatorState()
     {
         animator.ResetTrigger("Attack1");
         animator.ResetTrigger("Attack2");
         animator.ResetTrigger("Attack3");
         animator.ResetTrigger("SpecialAttack");
-
     }
 
-    /// <summary>
-    /// Reseta os triggers de ataque para garantir que apenas o trigger correto seja usado.
-    /// </summary>
     private void ResetAttackTriggers()
     {
         animator.ResetTrigger("Attack1");
@@ -105,10 +104,9 @@ public class PlayerAnimationController : MonoBehaviour
         animator.ResetTrigger("Attack3");
         animator.ResetTrigger("SpecialAttack");
     }
+    #endregion
 
-    /// <summary>
-    /// Método chamado ao final de uma animação de ataque para redefinir o estado de ataque.
-    /// </summary>
+    #region Eventos de Animação
     public void OnAttackAnimationEnd()
     {
         animator.SetBool("IsAttacking", false);
@@ -116,11 +114,14 @@ public class PlayerAnimationController : MonoBehaviour
         attackState.DeactivateSpecialAttackCollider();
         ResetAnimatorState();
     }
-    
+    #endregion
+
+    #region Controle de Estados
     public void ActivateBoolJump()
     {
-        animator.SetBool("Jump",true);
+        animator.SetBool("Jump", true);
     }
+
     public void DeactivateBoolJump()
     {
         animator.SetBool("Jump", false);
@@ -130,8 +131,10 @@ public class PlayerAnimationController : MonoBehaviour
     {
         animator.SetBool("Crouch", true);
     }
+
     public void DeactivateBoolCrouch()
     {
         animator.SetBool("Crouch", false);
     }
+    #endregion
 }

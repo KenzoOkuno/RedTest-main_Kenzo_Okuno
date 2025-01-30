@@ -6,7 +6,7 @@ public class IdleState : PlayerState
     private PlayerController playerController;
     private MovingState movingState;
     private PlayerAnimationController animationController;
-    
+
 
     private void Awake()
     {
@@ -14,7 +14,7 @@ public class IdleState : PlayerState
         playerController = GetComponent<PlayerController>();
         movingState = GetComponent<MovingState>();
         animationController = GetComponent<PlayerAnimationController>();
-        
+
         // Verifica se o PlayerController foi encontrado
         if (playerController == null)
         {
@@ -52,7 +52,7 @@ public class IdleState : PlayerState
             // Se houver input de movimento, transita para o estado Moving
             GetComponent<PlayerStateMachine>().ChangeState(GetComponent<PlayerStateMachine>().movingState);
         }
-        
+
         if (playerController.jumpAction.WasPressedThisFrame() && movingState.canJump && playerController.IsGrounded())
         {
             movingState.Jump();
@@ -63,4 +63,3 @@ public class IdleState : PlayerState
     }
 
 }
-

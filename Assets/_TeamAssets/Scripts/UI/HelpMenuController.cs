@@ -12,35 +12,27 @@ public class HelpMenuController : MonoBehaviour
     {
         playerInput = GetComponent<PlayerInput>();
 
-        if (playerInput != null)
+        if (playerInput == null)
         {
-            Debug.Log("[HelpMenuController] PlayerInput encontrado.");
+            Debug.LogError("[HelpMenuController] ERRO: PlayerInput não encontrado!");
+            return;
+        }
 
-            // Procurando o Action Map "UI" e a ação "HelpMenu"
-            var uiActionMap = playerInput.actions.FindActionMap("UI");
+        helpAction = playerInput.actions["HelpMenu"]; // Obtém a ação diretamente
 
-            if (uiActionMap != null)
-            {
-                Debug.Log("[HelpMenuController] Action Map 'UI' encontrado.");
-                helpAction = uiActionMap.FindAction("HelpMenu");
+        if (helpAction == null)
+        {
+            Debug.LogError("[HelpMenuController] ERRO: Ação 'HelpMenu' NÃO encontrada!");
+        }
 
-                if (helpAction != null)
-                {
-                    Debug.Log("[HelpMenuController] Ação 'HelpMenu' encontrada!");
-                }
-                else
-                {
-                    Debug.LogError("[HelpMenuController] ERRO: Ação 'HelpMenu' NÃO encontrada no Action Map 'UI'!");
-                }
-            }
-            else
-            {
-                Debug.LogError("[HelpMenuController] ERRO: Action Map 'UI' NÃO encontrado!");
-            }
+        // Garante que o menu comece fechado
+        if (helpMenu != null)
+        {
+            helpMenu.SetActive(false);
         }
         else
         {
-            Debug.LogError("[HelpMenuController] ERRO: PlayerInput não encontrado no GameObject!");
+            Debug.LogError("[HelpMenuController] ERRO: Nenhum GameObject atribuído ao helpMenu!");
         }
     }
 
@@ -49,7 +41,6 @@ public class HelpMenuController : MonoBehaviour
         if (helpAction != null)
         {
             helpAction.performed += ToggleHelpMenu;
-            Debug.Log("[HelpMenuController] Evento de entrada registrado para 'HelpMenu'.");
         }
     }
 
@@ -58,14 +49,15 @@ public class HelpMenuController : MonoBehaviour
         if (helpAction != null)
         {
             helpAction.performed -= ToggleHelpMenu;
-            Debug.Log("[HelpMenuController] Evento de entrada removido para 'HelpMenu'.");
         }
     }
 
     private void ToggleHelpMenu(InputAction.CallbackContext context)
     {
+        if (helpMenu == null) return;
+
         isOpen = !isOpen;
         helpMenu.SetActive(isOpen);
-        Debug.Log("[HelpMenuController] Menu de ajuda " + (isOpen ? "ABERTO" : "FECHADO") + ".");
+        Debug.Log($"[HelpMenuController] Menu de ajuda {(isOpen ? "ABERTO" : "FECHADO")}.");
     }
 }

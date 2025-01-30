@@ -38,7 +38,7 @@ public class MovingState : PlayerState
         if (playerController.crouch.WasPressedThisFrame()) // Usando o InputSystem para detectar pressionamento de agachar
         {
             ToggleCrouch();
-            
+
         }
 
         // Se o personagem estiver agachado, não pode mover
@@ -46,7 +46,7 @@ public class MovingState : PlayerState
         {
             return;
         }
-      
+
         // Movimento normal
         if (input.magnitude >= 0.1f)
         {
@@ -126,7 +126,7 @@ public class MovingState : PlayerState
         else
         {
             CrouchDown();
-            
+
         }
     }
 

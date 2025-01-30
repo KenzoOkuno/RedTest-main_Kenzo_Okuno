@@ -5,85 +5,109 @@ using UnityEngine.UI;
 
 public class RespawnManager : MonoBehaviour
 {
+    #region Variáveis Públicas
     public List<GameObject> enemyPrefabs; // Lista de prefabs dos inimigos
     public Image fadeImage; // Imagem usada para o efeito de fade
     public float fadeDuration = 1.5f;
     public float blackScreenTime = 1.0f;
+    #endregion
 
-    private Vector3[] enemyPositions;
-    private bool isRespawning = false;
+    #region Variáveis Privadas
+    private Vector3[] enemyPositions; // Posições iniciais dos inimigos
+    private bool isRespawning = false; // Controle de estado do respawn
+    #endregion
 
-    void Start()
+    #region Métodos Unity
+    private void Start()
     {
-        // Salva as posições iniciais dos inimigos para o respawn
+        // Armazena as posições iniciais dos inimigos
         enemyPositions = new Vector3[enemyPrefabs.Count];
         for (int i = 0; i < enemyPrefabs.Count; i++)
         {
-            enemyPositions[i] = enemyPrefabs[i].transform.position;
+            if (enemyPrefabs[i] != null)
+            {
+                enemyPositions[i] = enemyPrefabs[i].transform.position;
+            }
         }
     }
 
-    void Update()
+    private void Update()
     {
-        // Verifica se todos os inimigos foram destruídos e não está já respawnando
+        // Verifica se todos os inimigos foram destruídos e inicia o respawn
         if (!isRespawning && AllEnemiesDestroyed())
         {
             StartCoroutine(RespawnSequence());
         }
     }
+    #endregion
 
-    bool AllEnemiesDestroyed()
+    #region Verificação de Inimigos
+    /// <summary>
+    /// Verifica se todos os inimigos foram destruídos na cena.
+    /// </summary>
+    /// <returns>Retorna true se não houver mais inimigos.</returns>
+    private bool AllEnemiesDestroyed()
     {
-        // Conta os inimigos na cena pela tag "Enemy"
         return GameObject.FindGameObjectsWithTag("Enemy").Length == 0;
     }
+    #endregion
 
-    IEnumerator RespawnSequence()
+    #region Sequência de Respawn
+    /// <summary>
+    /// Executa a sequência de respawn com fade in/out.
+    /// </summary>
+    private IEnumerator RespawnSequence()
     {
         isRespawning = true;
 
-        // Inicia o fade para preto
         yield return StartCoroutine(FadeToBlack());
-
-        // Aguarda um curto tempo com a tela preta
         yield return new WaitForSeconds(blackScreenTime);
-
-        // Respawna os inimigos
         RespawnEnemies();
-
-        // Faz o fade para a tela normal
         yield return StartCoroutine(FadeFromBlack());
 
         isRespawning = false;
     }
+    #endregion
 
-    IEnumerator FadeToBlack()
+    #region Efeitos de Fade
+    /// <summary>
+    /// Faz a transição para a tela preta.
+    /// </summary>
+    private IEnumerator FadeToBlack()
+    {
+        yield return Fade(0, 1);
+    }
+
+    /// <summary>
+    /// Faz a transição da tela preta para a tela normal.
+    /// </summary>
+    private IEnumerator FadeFromBlack()
+    {
+        yield return Fade(1, 0);
+    }
+
+    /// <summary>
+    /// Controla o efeito de fade para preto ou normal.
+    /// </summary>
+    private IEnumerator Fade(float startAlpha, float endAlpha)
     {
         float elapsedTime = 0;
         while (elapsedTime < fadeDuration)
         {
-            float alpha = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
+            float alpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / fadeDuration);
             fadeImage.color = new Color(0, 0, 0, alpha);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        fadeImage.color = new Color(0, 0, 0, 1);
+        fadeImage.color = new Color(0, 0, 0, endAlpha);
     }
+    #endregion
 
-    IEnumerator FadeFromBlack()
-    {
-        float elapsedTime = 0;
-        while (elapsedTime < fadeDuration)
-        {
-            float alpha = Mathf.Lerp(1, 0, elapsedTime / fadeDuration);
-            fadeImage.color = new Color(0, 0, 0, alpha);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        fadeImage.color = new Color(0, 0, 0, 0);
-    }
-
-    void RespawnEnemies()
+    #region Respawn de Inimigos
+    /// <summary>
+    /// Respawna os inimigos na posição original.
+    /// </summary>
+    private void RespawnEnemies()
     {
         for (int i = 0; i < enemyPrefabs.Count; i++)
         {
@@ -91,10 +115,7 @@ public class RespawnManager : MonoBehaviour
             {
                 Instantiate(enemyPrefabs[i], enemyPositions[i], Quaternion.identity);
             }
-            else
-            {
-                Debug.LogWarning("Prefab do inimigo está faltando na lista!");
-            }
         }
     }
+    #endregion
 }

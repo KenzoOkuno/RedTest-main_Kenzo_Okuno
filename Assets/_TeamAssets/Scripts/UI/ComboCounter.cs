@@ -4,23 +4,36 @@ using System.Collections;
 
 public class ComboCounter : MonoBehaviour
 {
-    public Text comboText;  // Referência ao texto do combo
+    [Header("UI Reference")]
+    public Text comboText; // Referência ao texto do combo
+
+    [Header("Combo Settings")]
+    public float comboResetTime = 1.5f; // Tempo limite para resetar o combo
+    public float textAnimationSizeIncrease = 2f; // Tamanho extra na animação
+    public float textAnimationDuration = 0.2f; // Duração da animação
+
     private int comboCount = 0;
-    private float comboResetTime = 1.5f; // Tempo limite para resetar o combo
-    private Coroutine resetCoroutine;    // Para armazenar a coroutine de reset
+    private Coroutine resetCoroutine;
+    private int originalFontSize;
 
     private void Start()
     {
-        UpdateComboText();
+        if (comboText != null)
+        {
+            originalFontSize = comboText.fontSize;
+            UpdateComboText();
+        }
+        else
+        {
+            Debug.LogError("ComboCounter: comboText não foi atribuído!");
+        }
     }
 
     public void IncreaseCombo()
     {
         comboCount++;
         UpdateComboText();
-        
 
-        // Reseta o contador de tempo
         if (resetCoroutine != null)
         {
             StopCoroutine(resetCoroutine);
@@ -38,19 +51,13 @@ public class ComboCounter : MonoBehaviour
     private void UpdateComboText()
     {
         comboText.text = $"COMBO : X{comboCount}";
-        AnimateText();
+        StartCoroutine(AnimateTextSize());
     }
 
-    private void AnimateText()
+    private IEnumerator AnimateTextSize()
     {
-        StartCoroutine(TextSizeAnimation());
-    }
-
-    private IEnumerator TextSizeAnimation()
-    {
-        float originalSize = comboText.fontSize;
-        comboText.fontSize = Mathf.RoundToInt(originalSize + 2f); // Aumenta temporariamente o tamanho
-        yield return new WaitForSeconds(0.2f); // Pequeno delay para a animação
-        comboText.fontSize = Mathf.RoundToInt(originalSize); // Retorna ao tamanho original
+        comboText.fontSize = Mathf.RoundToInt(originalFontSize + textAnimationSizeIncrease);
+        yield return new WaitForSeconds(textAnimationDuration);
+        comboText.fontSize = originalFontSize;
     }
 }
