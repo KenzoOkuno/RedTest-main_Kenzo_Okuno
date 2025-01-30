@@ -42,11 +42,11 @@ public class MovingState : PlayerState
         }
 
         // Se o personagem estiver agachado, não pode mover
-      /*  if (isCrouching && !canMoveWhileCrouching)
+        if (isCrouching && !canMoveWhileCrouching)
         {
             return;
         }
-      */
+      
         // Movimento normal
         if (input.magnitude >= 0.1f)
         {
@@ -59,11 +59,7 @@ public class MovingState : PlayerState
         }
 
         // Lógica de pulo
-        if (playerController.jumpAction.WasPressedThisFrame() && canJump && playerController.IsGrounded())
-        {
-            Jump();
-            animationController.ActivateBoolJump();
-        }
+
 
         playerController.ApplyGravity();
     }
@@ -88,20 +84,37 @@ public class MovingState : PlayerState
 
     public void Jump()
     {
-        if (isJumping) return;  // Previne pulo contínuo, caso o pulo anterior ainda não tenha terminado.
+        if (!canJump || isJumping || !playerController.IsGrounded()) return;
 
         isJumping = true;
-        playerController.velocity.y = jumpForce;  // Aplica a força de pulo
+        canJump = false;
+
+        Debug.Log("[JUMP] Pulo iniciado!");
+
+        // Definir a velocidade vertical corretamente
+        playerController.velocity.y = Mathf.Sqrt(jumpForce * -2f * playerController.gravity);
+
         StartCoroutine(JumpCooldown());
     }
 
+
     private IEnumerator JumpCooldown()
     {
-        canJump = false;  // Desativa o pulo durante o cooldown
-        yield return new WaitForSeconds(jumpCooldown);  // Aguarda o tempo do cooldown
-        canJump = true;   // Permite pular novamente
-        isJumping = false;  // Reseta o estado do pulo
+        canJump = false;
+
+        // Obtém a UI e inicia a contagem regressiva
+        JumpCooldownUI cooldownUI = FindAnyObjectByType<JumpCooldownUI>();
+        if (cooldownUI != null)
+        {
+            cooldownUI.StartCooldownUI(jumpCooldown);
+        }
+
+        yield return new WaitForSeconds(jumpCooldown);
+
+        canJump = true;
+        isJumping = false;
     }
+
 
     public void ToggleCrouch()
     {

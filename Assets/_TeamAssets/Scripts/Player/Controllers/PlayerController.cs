@@ -65,21 +65,22 @@ public class PlayerController : MonoBehaviour
     }
 
 
-  
+
 
     public void ApplyGravity()
     {
-        if (characterController.isGrounded && velocity.y < 0)
+        if (IsGrounded() && velocity.y < 0)
         {
-            velocity.y = -2f; // "Fixando" no chão
+            velocity.y = -2f; // Manter fixo no chão
         }
         else
         {
-            velocity.y += gravity * Time.deltaTime; // Aplica a gravidade
+            velocity.y += gravity * Time.deltaTime; // Aplicar gravidade suavemente
         }
 
-        characterController.Move(velocity * Time.deltaTime);  // Move o personagem aplicando a gravidade
+        characterController.Move(velocity * Time.deltaTime);
     }
+
 
     public Vector2 GetMovementInput()
     {

@@ -133,6 +133,12 @@ public class EnemyController : MonoBehaviour
 
         health -= damage;
         Debug.Log($"Nova vida do inimigo: {health}");
+       
+        ComboCounter comboCounter = FindFirstObjectByType<ComboCounter>();
+        if (comboCounter != null)
+        {
+            comboCounter.IncreaseCombo();
+        }
 
         // Atualiza a barra de vida
         if (healthBarFill != null)

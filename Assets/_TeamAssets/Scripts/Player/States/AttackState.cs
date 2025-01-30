@@ -17,8 +17,6 @@ public class AttackState : MonoBehaviour
     [SerializeField] private InputActionReference attackInput;
     [SerializeField] private InputActionReference attackInput2;
     [SerializeField] private InputActionReference specialAttackInput;
-    public GameObject Testeç;
-
     private float specialAttackCooldown = 5f;
     private float lastSpecialAttackTime = 0f;
 
