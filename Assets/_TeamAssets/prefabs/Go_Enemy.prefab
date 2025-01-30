@@ -258,7 +258,6 @@ GameObject:
   - component: {fileID: 9025037071334971074}
   - component: {fileID: 995353075549803963}
   - component: {fileID: 4142952622879848862}
-  - component: {fileID: 6663125380292832194}
   m_Layer: 0
   m_Name: Go_Enemy
   m_TagString: Enemy
@@ -484,18 +483,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6663125380292832194
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5546588082287859990}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcdcbf34bae4d31469bdc8803bd5b9ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8923258310740311990
 GameObject:
   m_ObjectHideFlags: 0

@@ -33,7 +33,7 @@ public class EnemyController : MonoBehaviour
         // Instancia a barra de vida no ponto de spawn
         if (healthBarPrefab != null)
         {
-        //    instantiatedHealthBar = Instantiate(healthBarPrefab, healthBarSpawnPoint.position, Quaternion.identity);
+            //    instantiatedHealthBar = Instantiate(healthBarPrefab, healthBarSpawnPoint.position, Quaternion.identity);
             Debug.Log("Barra de vida instanciada.");
 
             // Caso healthBarFill não tenha sido configurada no Inspector
@@ -51,7 +51,7 @@ public class EnemyController : MonoBehaviour
             }
 
             // Faz a barra de vida seguir o inimigo
-           // instantiatedHealthBar.transform.SetParent(healthBarSpawnPoint, true);
+            // instantiatedHealthBar.transform.SetParent(healthBarSpawnPoint, true);
         }
         else
         {
@@ -165,7 +165,7 @@ public class EnemyController : MonoBehaviour
         yield return new WaitForSeconds(4f);
 
         // Ativar a animação de morte
-        
+
 
         // Destruir o inimigo após a animação
         Destroy(gameObject);
@@ -193,6 +193,7 @@ public class EnemyController : MonoBehaviour
     private System.Collections.IEnumerator StopKnockback()
     {
         yield return new WaitForSeconds(0.2f);
+        rb.freezeRotation = true;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         Debug.Log("Knockback parado.");
