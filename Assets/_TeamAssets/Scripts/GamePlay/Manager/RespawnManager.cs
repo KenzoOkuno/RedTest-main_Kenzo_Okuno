@@ -10,24 +10,23 @@ public class RespawnManager : MonoBehaviour
     public float fadeDuration = 1.5f;
     public float blackScreenTime = 1.0f;
 
-    private List<GameObject> activeEnemies = new List<GameObject>();
     private Vector3[] enemyPositions;
+    private bool isRespawning = false;
 
     void Start()
     {
-        // Salva as posições iniciais para respawn sem instanciar novos inimigos
+        // Salva as posições iniciais dos inimigos para o respawn
         enemyPositions = new Vector3[enemyPrefabs.Count];
         for (int i = 0; i < enemyPrefabs.Count; i++)
         {
             enemyPositions[i] = enemyPrefabs[i].transform.position;
-            activeEnemies.Add(enemyPrefabs[i]); // Adiciona os inimigos já existentes
         }
     }
 
     void Update()
     {
-        // Verifica se todos os inimigos foram destruídos
-        if (AllEnemiesDestroyed())
+        // Verifica se todos os inimigos foram destruídos e não está já respawnando
+        if (!isRespawning && AllEnemiesDestroyed())
         {
             StartCoroutine(RespawnSequence());
         }
@@ -35,16 +34,14 @@ public class RespawnManager : MonoBehaviour
 
     bool AllEnemiesDestroyed()
     {
-        foreach (var enemy in activeEnemies)
-        {
-            if (enemy != null)
-                return false;
-        }
-        return true;
+        // Conta os inimigos na cena pela tag "Enemy"
+        return GameObject.FindGameObjectsWithTag("Enemy").Length == 0;
     }
 
     IEnumerator RespawnSequence()
     {
+        isRespawning = true;
+
         // Inicia o fade para preto
         yield return StartCoroutine(FadeToBlack());
 
@@ -56,6 +53,8 @@ public class RespawnManager : MonoBehaviour
 
         // Faz o fade para a tela normal
         yield return StartCoroutine(FadeFromBlack());
+
+        isRespawning = false;
     }
 
     IEnumerator FadeToBlack()
@@ -86,11 +85,16 @@ public class RespawnManager : MonoBehaviour
 
     void RespawnEnemies()
     {
-        activeEnemies.Clear();
         for (int i = 0; i < enemyPrefabs.Count; i++)
         {
-            GameObject newEnemy = Instantiate(enemyPrefabs[i], enemyPositions[i], Quaternion.identity);
-            activeEnemies.Add(newEnemy);
+            if (enemyPrefabs[i] != null)
+            {
+                Instantiate(enemyPrefabs[i], enemyPositions[i], Quaternion.identity);
+            }
+            else
+            {
+                Debug.LogWarning("Prefab do inimigo está faltando na lista!");
+            }
         }
     }
 }
