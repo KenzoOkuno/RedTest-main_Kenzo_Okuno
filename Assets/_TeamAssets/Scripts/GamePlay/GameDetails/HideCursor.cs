@@ -8,7 +8,7 @@ public class HideMouseCursor : MonoBehaviour
     {
         // Escondendo cursor
         Cursor.visible = false;
-
+        
         // Travando sua posi��o
         Cursor.lockState = CursorLockMode.Locked;
     }

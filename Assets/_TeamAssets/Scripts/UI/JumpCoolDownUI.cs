@@ -13,14 +13,6 @@ public class JumpCooldownUI : MonoBehaviour
         // Busca o MovingState automaticamente no Player
         movingState = FindFirstObjectByType<MovingState>();
 
-        if (movingState == null)
-        {
-            Debug.LogError("[JumpCooldownUI] ERRO: MovingState não encontrado!");
-        }
-        else
-        {
-            Debug.Log("[JumpCooldownUI] MovingState encontrado!");
-        }
 
         // Inicia o texto como "JUMP READY"
         UpdateCooldownText(0);

@@ -1,21 +1,26 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 using UnityEngine.Audio;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
+    #region Configurações de Movimento
     [Header("Movement Settings")]
     public float walkSpeed = 2f;
     public float sprintSpeed = 5f;
     public float rotationSpeed = 10f;
     public float gravity = 1f;
+    #endregion
+
+    #region Referências de Áudio
     public AudioSource audioSource;
     public AudioClip punchSound;
     public AudioClip specialPunchSound;
-    public Transform cameraTransform;
+    #endregion
 
+    #region Referências Gerais
+    public Transform cameraTransform;
     public CharacterController characterController;
     public Vector3 velocity;
 
@@ -29,16 +34,18 @@ public class PlayerController : MonoBehaviour
     public InputAction crouch;
 
     private PlayerStateMachine stateMachine;
-    private PlayerComboController comboController;  // Referência ao controlador de combo
-    private EnemyParalyzeController enemyParalyzeController;  // Controlador de paralisia do inimigo
+    private PlayerComboController comboController;
+    private EnemyParalyzeController enemyParalyzeController;
+    #endregion
 
+    #region Métodos Unity
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         stateMachine = GetComponent<PlayerStateMachine>();
-        comboController = GetComponent<PlayerComboController>();  // Inicializa o controlador de combos
-        enemyParalyzeController = GetComponent<EnemyParalyzeController>();  // Inicializa o controlador de paralisia
+        comboController = GetComponent<PlayerComboController>();
+        enemyParalyzeController = GetComponent<EnemyParalyzeController>();
 
         if (playerInput != null)
         {
@@ -50,76 +57,38 @@ public class PlayerController : MonoBehaviour
             jumpAction = playerInput.actions["Jump"];
             crouch = playerInput.actions["Crouch"];
         }
-        else
-        {
-            Debug.LogError("PlayerInput não está configurado.");
-        }
     }
 
     private void Update()
     {
-        stateMachine?.CurrentState?.HandleMovement();  // Delegar movimento ao estado atual
-        ApplyGravity();  // Aplica a gravidade
-
-       // HandleInputActions(); // Processa as ações de entrada
+        stateMachine?.CurrentState?.HandleMovement();
+        ApplyGravity();
     }
+    #endregion
 
-
-
-
+    #region Mecânicas do Jogador
     public void ApplyGravity()
     {
-        if (IsGrounded() && velocity.y < 0)
-        {
-            velocity.y = -2f; // Manter fixo no chão
-        }
-        else
-        {
-            velocity.y += gravity * Time.deltaTime; // Aplicar gravidade suavemente
-        }
-
+        velocity.y = IsGrounded() && velocity.y < 0 ? -2f : velocity.y + gravity * Time.deltaTime;
         characterController.Move(velocity * Time.deltaTime);
     }
 
+    public Vector2 GetMovementInput() => moveAction?.ReadValue<Vector2>() ?? Vector2.zero;
+    public bool IsSprinting() => sprintAction?.IsPressed() ?? false;
+    public bool IsGrounded() => characterController.isGrounded;
+    #endregion
 
-    public Vector2 GetMovementInput()
-    {
-        return moveAction?.ReadValue<Vector2>() ?? Vector2.zero;
-    }
-
-    public bool IsSprinting()
-    {
-        return sprintAction?.IsPressed() ?? false;
-    }
-
-    public bool IsGrounded()
-    {
-        return characterController.isGrounded;
-    }
-
+    #region Áudio
     public void PlayPunchSound()
     {
         if (audioSource != null && punchSound != null)
-        {
-            Debug.Log("Tocando som de dano.");
             audioSource.PlayOneShot(punchSound);
-        }
-        else
-        {
-            Debug.LogError("Erro: AudioSource ou DamageSound não configurados.");
-        }
     }
 
     public void PlaySpecialPunchSound()
     {
         if (audioSource != null && specialPunchSound != null)
-        {
-            Debug.Log("Tocando som de dano.");
             audioSource.PlayOneShot(specialPunchSound);
-        }
-        else
-        {
-            Debug.LogError("Erro: AudioSource ou DamageSound não configurados.");
-        }
     }
+    #endregion
 }

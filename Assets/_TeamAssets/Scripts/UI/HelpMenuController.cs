@@ -14,24 +14,17 @@ public class HelpMenuController : MonoBehaviour
 
         if (playerInput != null)
         {
-            Debug.Log("[HelpMenuController] PlayerInput encontrado.");
+            
 
             // Procurando o Action Map "UI" e a ação "HelpMenu"
             var uiActionMap = playerInput.actions.FindActionMap("UI");
 
             if (uiActionMap != null)
             {
-                Debug.Log("[HelpMenuController] Action Map 'UI' encontrado.");
+                
                 helpAction = uiActionMap.FindAction("HelpMenu");
 
-                if (helpAction != null)
-                {
-                    Debug.Log("[HelpMenuController] Ação 'HelpMenu' encontrada!");
-                }
-                else
-                {
-                    Debug.LogError("[HelpMenuController] ERRO: Ação 'HelpMenu' NÃO encontrada no Action Map 'UI'!");
-                }
+                
             }
             else
             {
@@ -49,7 +42,7 @@ public class HelpMenuController : MonoBehaviour
         if (helpAction != null)
         {
             helpAction.performed += ToggleHelpMenu;
-            Debug.Log("[HelpMenuController] Evento de entrada registrado para 'HelpMenu'.");
+           
         }
     }
 
@@ -58,7 +51,7 @@ public class HelpMenuController : MonoBehaviour
         if (helpAction != null)
         {
             helpAction.performed -= ToggleHelpMenu;
-            Debug.Log("[HelpMenuController] Evento de entrada removido para 'HelpMenu'.");
+            
         }
     }
 
@@ -66,6 +59,6 @@ public class HelpMenuController : MonoBehaviour
     {
         isOpen = !isOpen;
         helpMenu.SetActive(isOpen);
-        Debug.Log("[HelpMenuController] Menu de ajuda " + (isOpen ? "ABERTO" : "FECHADO") + ".");
+        
     }
 }

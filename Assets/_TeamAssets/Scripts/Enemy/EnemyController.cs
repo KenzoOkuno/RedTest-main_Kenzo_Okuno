@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class EnemyController : MonoBehaviour
 {
+    #region Variables
     public float health = 100f; // Vida do inimigo
     public float maxHealth = 200f; // Vida máxima do inimigo
     public float knockbackForce = 5f; // Força do knockback
@@ -12,7 +13,7 @@ public class EnemyController : MonoBehaviour
     public Transform damageEffectSpawnPoint; // Ponto de spawn do efeito (pode ser um Transform no personagem)
     private Rigidbody rb; // Rigidbody 3D do inimigo
     public AudioClip damageSound; // Referência ao clip de áudio de dano
-    public AudioClip deathSound; // Referência ao clip de áudio de dano
+    public AudioClip deathSound; // Referência ao clip de áudio de morte
     private AudioSource audioSource; // Componente AudioSource
 
     [Header("Health Bar Setup")]
@@ -21,22 +22,24 @@ public class EnemyController : MonoBehaviour
     private GameObject instantiatedHealthBar; // Instância da barra de vida
 
     private bool isDead = false; // Verifica se o inimigo está morto
+    #endregion
 
+    #region Initialization
     private void Awake()
     {
+        // Inicializa os componentes necessários
         rb = GetComponent<Rigidbody>();
         enemyAnimationController = GetComponent<EnemyAnimationController>();
         audioSource = GetComponent<AudioSource>();
 
-        Debug.Log("Awake chamado.");
+       
 
         // Instancia a barra de vida no ponto de spawn
         if (healthBarPrefab != null)
         {
-            //    instantiatedHealthBar = Instantiate(healthBarPrefab, healthBarSpawnPoint.position, Quaternion.identity);
-            Debug.Log("Barra de vida instanciada.");
+            
 
-            // Caso healthBarFill não tenha sido configurada no Inspector
+            // Configuração do healthBarFill caso não tenha sido configurado no Inspector
             if (healthBarFill == null)
             {
                 healthBarFill = instantiatedHealthBar.GetComponentInChildren<Image>();
@@ -44,21 +47,16 @@ public class EnemyController : MonoBehaviour
                 {
                     Debug.LogError("Erro: O 'healthBarFill' não foi encontrado no prefab!");
                 }
-                else
-                {
-                    Debug.Log("HealthBarFill configurado com sucesso.");
-                }
             }
-
-            // Faz a barra de vida seguir o inimigo
-            // instantiatedHealthBar.transform.SetParent(healthBarSpawnPoint, true);
         }
         else
         {
             Debug.LogError("Erro: healthBarPrefab ou healthBarSpawnPoint não estão configurados no Inspector!");
         }
     }
+    #endregion
 
+    #region Health Bar Management
     private void Update()
     {
         // Opcional: Faz a barra de vida sempre encarar a câmera
@@ -67,43 +65,43 @@ public class EnemyController : MonoBehaviour
             instantiatedHealthBar.transform.LookAt(Camera.main.transform);
         }
     }
+    #endregion
 
-    // Método chamado quando algo entra no collider do inimigo
+    #region Damage Handling
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"OnTriggerEnter chamado com o objeto: {other.gameObject.name}");
+        // Detecta ataques do jogador
+        
 
         if (other.CompareTag("PlayerAttack"))
         {
-            Debug.Log("PlayerAttack detectado.");
+            
             TakeDamage(20f); // Aplica dano (valor de exemplo)
             ApplyKnockback(other); // Aplica knockback baseado na direção do atacante
             ActivateDamageEffect();
             PlayDamageSound();
             CameraShake.Instance.Shake(0.3f, 0.2f);
             ControllerVibration.Instance.Vibrate(0.5f, 0.7f);
-
-
         }
 
         if (other.CompareTag("PlayerSpecialAttack"))
         {
-            Debug.Log("PlayerSpecialAttack detectado.");
+           
             TakeDamage(100f); // Aplica dano (valor de exemplo)
             ApplyKnockback(other); // Aplica knockback baseado na direção do atacante
             ActivateDamageEffect();
             PlayDamageSound();
             CameraShake.Instance.Shake(0.3f, 0.2f);
             ControllerVibration.Instance.Vibrate(0.5f, 0.7f);
-
         }
     }
 
     public void PlayDamageSound()
     {
+        // Toca o som de dano
         if (audioSource != null && damageSound != null)
         {
-            Debug.Log("Tocando som de dano.");
+            
             audioSource.PlayOneShot(damageSound);
         }
         else
@@ -114,9 +112,10 @@ public class EnemyController : MonoBehaviour
 
     public void PlayDeathSound()
     {
+        // Toca o som de morte
         if (audioSource != null && deathSound != null)
         {
-            Debug.Log("Tocando som de dano.");
+          
             audioSource.PlayOneShot(deathSound);
         }
         else
@@ -127,13 +126,14 @@ public class EnemyController : MonoBehaviour
 
     private void TakeDamage(float damage)
     {
+        // Aplica dano ao inimigo
         if (isDead) return; // Não aplica mais dano se o inimigo estiver morto
 
-        Debug.Log($"TakeDamage chamado com dano: {damage}");
+       
 
         health -= damage;
-        Debug.Log($"Nova vida do inimigo: {health}");
        
+
         ComboCounter comboCounter = FindFirstObjectByType<ComboCounter>();
         if (comboCounter != null)
         {
@@ -144,7 +144,7 @@ public class EnemyController : MonoBehaviour
         if (healthBarFill != null)
         {
             healthBarFill.fillAmount = Mathf.Clamp01(health / maxHealth);
-            Debug.Log($"Barra de vida atualizada: {healthBarFill.fillAmount}");
+            
         }
         else
         {
@@ -159,27 +159,29 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Inimigo recebeu dano, mas ainda está vivo.");
+           
             enemyAnimationController.TakeDamage();
         }
     }
+    #endregion
 
+    #region Death Handling
     private System.Collections.IEnumerator HandleDeath()
     {
         // Aguardar 4 segundos antes de destruir
         enemyAnimationController.Die();
         yield return new WaitForSeconds(4f);
 
-        // Ativar a animação de morte
-
-
         // Destruir o inimigo após a animação
         Destroy(gameObject);
     }
+    #endregion
 
+    #region Knockback Handling
     private void ApplyKnockback(Collider attackCollider)
     {
-        Debug.Log("ApplyKnockback chamado.");
+        // Aplica o efeito de knockback
+        
 
         if (rb != null)
         {
@@ -188,7 +190,7 @@ public class EnemyController : MonoBehaviour
             knockbackDirection.y = 0; // Mantém no plano horizontal
             rb.AddForce(knockbackDirection * knockbackForce, ForceMode.Impulse);
             StartCoroutine(StopKnockback());
-            Debug.Log("Knockback aplicado.");
+           
         }
         else
         {
@@ -198,22 +200,26 @@ public class EnemyController : MonoBehaviour
 
     private System.Collections.IEnumerator StopKnockback()
     {
+        // Para o knockback após um curto período
         yield return new WaitForSeconds(0.2f);
         rb.freezeRotation = true;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        Debug.Log("Knockback parado.");
+       
     }
+    #endregion
 
+    #region Damage Effect Handling
     private void ActivateDamageEffect()
     {
-        Debug.Log("ActivateDamageEffect chamado.");
+        // Ativa o efeito de dano
+        
         if (damageEffect != null)
         {
             damageEffect.SetActive(true);
             damageEffect.transform.position = damageEffectSpawnPoint.position;
             Invoke("DeactivateDamageEffect", 1f);
-            Debug.Log("Efeito de dano ativado.");
+            
         }
         else
         {
@@ -223,10 +229,12 @@ public class EnemyController : MonoBehaviour
 
     private void DeactivateDamageEffect()
     {
-        Debug.Log("DeactivateDamageEffect chamado.");
+        // Desativa o efeito de dano
+       
         if (damageEffect != null)
         {
             damageEffect.SetActive(false);
         }
     }
+    #endregion
 }

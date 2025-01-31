@@ -2,17 +2,22 @@ using UnityEngine;
 
 public class EnemyAnimationController : MonoBehaviour
 {
+    #region Variables
     private Animator animator;
     private EnemyController enemyController;
     private bool isPunched = false; // Controla se o inimigo está "Punched"
+    #endregion
 
+    #region Initialization
     private void Awake()
     {
-        // Obtém o componente Animator do inimigo
+        // Obtém o componente Animator e EnemyController do inimigo
         animator = GetComponent<Animator>();
         enemyController = GetComponent<EnemyController>();
     }
+    #endregion
 
+    #region Damage Handling
     // Chamar este método quando o inimigo receber dano
     public void TakeDamage()
     {
@@ -33,11 +38,14 @@ public class EnemyAnimationController : MonoBehaviour
         isPunched = false;
         animator.SetBool("IsPunched", false); // Retorna ao estado Idle
     }
+    #endregion
 
+    #region Death Handling
     // Chama este método para iniciar a animação de morte
     public void Die()
     {
-        Debug.Log("Trigger de Morte ativado!");
+        
         animator.SetTrigger("Die"); // Ativa o trigger de morte no Animator
     }
+    #endregion
 }

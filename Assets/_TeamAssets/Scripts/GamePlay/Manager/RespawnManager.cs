@@ -5,14 +5,19 @@ using UnityEngine.UI;
 
 public class RespawnManager : MonoBehaviour
 {
+    #region Public Variables
     public List<GameObject> enemyPrefabs; // Lista de prefabs dos inimigos
     public Image fadeImage; // Imagem usada para o efeito de fade
-    public float fadeDuration = 1.5f;
-    public float blackScreenTime = 1.0f;
+    public float fadeDuration = 1.5f; // Duração do efeito de fade
+    public float blackScreenTime = 1.0f; // Tempo com a tela preta após o fade
+    #endregion
 
-    private Vector3[] enemyPositions;
-    private bool isRespawning = false;
+    #region Private Variables
+    private Vector3[] enemyPositions; // Posições iniciais dos inimigos
+    private bool isRespawning = false; // Flag que controla o processo de respawn
+    #endregion
 
+    #region Unity Lifecycle
     void Start()
     {
         // Salva as posições iniciais dos inimigos para o respawn
@@ -31,13 +36,33 @@ public class RespawnManager : MonoBehaviour
             StartCoroutine(RespawnSequence());
         }
     }
+    #endregion
 
+    #region Helper Methods
     bool AllEnemiesDestroyed()
     {
         // Conta os inimigos na cena pela tag "Enemy"
         return GameObject.FindGameObjectsWithTag("Enemy").Length == 0;
     }
 
+    void RespawnEnemies()
+    {
+        // Respawna os inimigos nas suas posições iniciais
+        for (int i = 0; i < enemyPrefabs.Count; i++)
+        {
+            if (enemyPrefabs[i] != null)
+            {
+                Instantiate(enemyPrefabs[i], enemyPositions[i], Quaternion.identity);
+            }
+            else
+            {
+                Debug.LogWarning("Prefab do inimigo está faltando na lista!");
+            }
+        }
+    }
+    #endregion
+
+    #region Respawn Sequence
     IEnumerator RespawnSequence()
     {
         isRespawning = true;
@@ -56,7 +81,9 @@ public class RespawnManager : MonoBehaviour
 
         isRespawning = false;
     }
+    #endregion
 
+    #region Fade Effects
     IEnumerator FadeToBlack()
     {
         float elapsedTime = 0;
@@ -82,19 +109,5 @@ public class RespawnManager : MonoBehaviour
         }
         fadeImage.color = new Color(0, 0, 0, 0);
     }
-
-    void RespawnEnemies()
-    {
-        for (int i = 0; i < enemyPrefabs.Count; i++)
-        {
-            if (enemyPrefabs[i] != null)
-            {
-                Instantiate(enemyPrefabs[i], enemyPositions[i], Quaternion.identity);
-            }
-            else
-            {
-                Debug.LogWarning("Prefab do inimigo está faltando na lista!");
-            }
-        }
-    }
+    #endregion
 }

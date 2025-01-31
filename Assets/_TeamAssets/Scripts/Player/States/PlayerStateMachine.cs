@@ -16,7 +16,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     public void ChangeState(PlayerState newState)
     {
-        Debug.Log("Mudando para estado: " + newState.GetType().Name);
+       
         CurrentState?.ExitState();
         CurrentState = newState;
         CurrentState?.EnterState();
