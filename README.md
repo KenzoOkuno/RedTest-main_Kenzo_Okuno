@@ -1,6 +1,8 @@
 # RedTest-main_Kenzo_Okuno
 Este repositório contém o projeto de um jogo desenvolvido com Unity3D(versão 6000.0.25f1).
 
+Branch para avaliação --> Main
+
 ## Estrutura do Projeto
 
 - A cena principal do jogo está localizada em: Assets-->TeamAssets-->Scenes
